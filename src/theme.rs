@@ -1,4 +1,4 @@
-use termimad::{MadSkin, StyledChar, crossterm::style::Color::{AnsiValue, Green, Rgb, Yellow}};
+use termimad::{MadSkin, StyledChar, crossterm::style::Color::{Rgb, Yellow}};
 
 pub fn default() -> MadSkin {
   let mut skin = MadSkin::default();

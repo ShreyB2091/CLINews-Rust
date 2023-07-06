@@ -19,8 +19,18 @@ pub enum NewsApiError {
 
 #[derive(Deserialize, Debug)]
 pub struct Article {
-	pub title: String,
-	pub url: String
+	title: String,
+	url: String
+}
+
+impl Article {
+	pub fn title(&self) -> &str {
+		&self.title
+	}
+
+	pub fn url(&self) -> &str {
+		&self.url
+	}
 }
 
 #[derive(Deserialize, Debug)]
@@ -30,18 +40,11 @@ pub struct NewsAPIResponse {
 	code: Option<String>
 }
 
-// pub fn get_articles(url: &str) -> Result<Articles, NewsApiError> {
-// 	let response = ureq::get(url)
-// 		.call()
-// 		.map_err(|_e| NewsApiError::RequestFailed)?
-// 		.into_string()
-// 		.map_err(|_e| NewsApiError::ResponseConversionFailure)?;
-
-// 	let articles: Articles = serde_json::from_str(&response)
-// 		.map_err(|_e| NewsApiError::ArticleParseFailed)?;
-
-// 	Ok(articles)
-// }
+impl NewsAPIResponse {
+	pub fn articles(&self) -> &Vec<Article> {
+		&self.articles
+	}
+}
 
 pub enum Endpoint {
 	TopHeadlines,
@@ -68,14 +71,14 @@ impl ToString for Country {
 }
 
 
-struct NewsAPI {
+pub struct NewsAPI {
 	api_key: String,
 	endpoint: Endpoint,
 	country: Country,
 }
 
 impl NewsAPI {
-	fn new(api_key: &str) -> NewsAPI {
+	pub fn new(api_key: &str) -> NewsAPI {
 		NewsAPI {
 			api_key: api_key.to_string(),
 			endpoint: Endpoint::TopHeadlines,
@@ -83,12 +86,12 @@ impl NewsAPI {
 		}
 	}
 
-	fn endpoint(&mut self, endpoint: Endpoint) -> &mut NewsAPI {
+	pub fn endpoint(&mut self, endpoint: Endpoint) -> &mut NewsAPI {
 		self.endpoint = endpoint;
 		self
 	}
 	
-	fn country(&mut self, country: Country) -> &mut NewsAPI {
+	pub fn country(&mut self, country: Country) -> &mut NewsAPI {
 		self.country = country;
 		self
 	}
@@ -102,7 +105,7 @@ impl NewsAPI {
 		Ok(url.to_string())
 	}
 
-	fn fetch(&self) -> Result<NewsAPIResponse, NewsApiError> {
+	pub fn fetch(&self) -> Result<NewsAPIResponse, NewsApiError> {
 		let url = self.prepare_url()?;
 		let req = ureq::get(&url)
 			.set("Authorization", &self.api_key);
